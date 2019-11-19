@@ -21,6 +21,17 @@ def Delete_Classifier(ClassifierName=None):  # name without extension, default d
 
 
 def InsertNewClassifier():  # giacomo essendo su un'altra macchina come presumo mi arrivi il file?
+	print()
 
 
-def GetClassifier():
+def GetClassifier():  # giacomo cosa mi deve restituire?file aperto o indirizzo? lo ottengo tramite nome?
+	print()
+
+
+def get_Classifiers_Name():  # return all the Classifier name in the classifier folder
+	for file in glob.glob(Classifier_Path+"*.h5"):
+		name = str(file)
+		name = name.split(".")[0]
+		name = name.split("/")
+		name = name[len(name)-1]
+		print(name)
