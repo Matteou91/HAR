@@ -21,7 +21,7 @@ def summarize_results(scores):
 def fit_network_thread(filename, classifileName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc,Validation,repeats):
     #need to change this with a call to getSensorData on db server
     Json = getSensorsData(activity, axes, device, probability, sensor, user, timestart, timeend)
-    trainX, trainY, testX, testY, validationX, validationY = Prepare_Data(Json, classifileName, Validation, testperc)
+    trainX, trainY, testX, testY, validationX, validationY, Gyro_array, Gyro_labels, Gyro_test, Gyro_test_labels, Gyro_Validation, Gyro_Validation_labels= Prepare_Data(Json, classifileName, Validation, testperc)
     scores = list()
     model = load_model(Classifier_Path + classifileName + '.h5')
     # giacomo devo effettuare repeats volte l'esperimento? se NO => eliminare +str(r)+ al prossimo giacomo
@@ -39,7 +39,7 @@ def fit_network_thread(filename, classifileName, activity, axes, device, probabi
             file.close()
 
 
-def Train_Classifier(classifierName , activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size , testperc , Validation=False , repeats=1):
+def Train_Classifier(classifierName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc, Validation=False, repeats=1):
     now = str(datetime.now())
     now = now.replace(" ", "")
     Model_Path_Check = Model_Path[0:(len(Model_Path)-1)]  # don't consider "/"
@@ -50,14 +50,12 @@ def Train_Classifier(classifierName , activity, axes, device, probability, senso
         makedirs(Model_Path+"User_"+user)
     if not exists(Model_Path + "User_" + user+'/'+classifierName):
         makedirs(Model_Path + "User_" + user+'/'+classifierName)
-    # filename=ticket that give back to client
-    filename = Model_Path + "User_" + user+'/'+classifierName+'/'+classifierName + "_" + user + "__" + now
+    # ticket that give back to client
+    ticket = classifierName + "_" + user + "__" + now
+    filename = Model_Path + "User_" + user+'/'+classifierName+'/'+ ticket
     # let another thread finish execute code and give back the ticket to client
-    thread = Thread(target=fit_network_thread, args=(filename, classifileName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc,Validation,repeats,))
+    thread = Thread(target=fit_network_thread, args=(filename, classifierName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc,Validation,repeats,))
     thread.start()
-    return filename
+    return ticket
 
-
-#trainX, trainY, testX, testY, validationX, validationY = load_dataset("UCI ", True)  # delete
-#Fake_model(trainX, trainY, "Classifier")  # delete
-#print(fit_network("GiacomoGiorgi","Classifier", 1, 2, 64, trainX, trainY, testX, testY, validationX, validationY,scores))  # delete
+print("ticket = ",Train_Classifier("Classifier2" , None, None, None, None, None, "GiacomoGiorgi", None, None, 1, 2, 64 , 20 , True , 1))

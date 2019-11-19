@@ -6,6 +6,8 @@ from Info.Paths import Classifier_Path
 from os import makedirs
 from os.path import exists
 
+from DB_func import getSensorsData
+from Prepare_Data import Prepare_Data
 
 #from Data_Management import load_dataset # delete is a test import
 
@@ -26,4 +28,5 @@ def Fake_model(trainX,trainY,name): #create fake model,in real API DEV will give
 
 
 #trainX, trainY, testX, testY, validationX, validationY = load_dataset("UCI ",True)  #delete
-#Fake_model(trainX,trainY,"Classifier1")  #delete
+
+Fake_model(trainX,trainY,"Classifier2")  #delete
