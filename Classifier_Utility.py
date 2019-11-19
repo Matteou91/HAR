@@ -29,9 +29,10 @@ def GetClassifier():  # giacomo cosa mi deve restituire?file aperto o indirizzo?
 
 
 def get_Classifiers_Name():  # return all the Classifier name in the classifier folder
-	for file in glob.glob(Classifier_Path+"*.h5"):
-		name = str(file)
-		name = name.split(".")[0]
-		name = name.split("/")
-		name = name[len(name)-1]
-		print(name)
+	if exists(Classifier_Path[0:(len(Classifier_Path)-1)]):
+		for file in glob.glob(Classifier_Path+"*.h5"):
+			name = str(file)
+			name = name.split(".")[0]
+			name = name.split("/")
+			name = name[len(name)-1]
+			print(name)
