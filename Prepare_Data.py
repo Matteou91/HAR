@@ -7,27 +7,23 @@ from numpy import empty
 import numpy
 
 
-def get_numpy_array(list,n_timesteps,axis):  # to calculate axis 0 dimension
-	list2 = []
-	for i in range(len(list)):
-		for j in range(len(list[i])):
-			list2.append(list[i][j])
-	try:
-		list2.remove([])
-	except ValueError:
-		pass
-	arr = numpy.array(list2, numpy.int64).reshape(int(len(list2)/(n_timesteps*axis)), n_timesteps, axis)
-	return arr
+def dim(list):  # return total elements of a 2 axis list
+	count = 0
+	for i in list:
+		count += len(i)
+	return count
 
 
-def remove_extradata(list,leng):
-	for i in range(len(Labels)):
-		listlen = len(list[i])
-		listsurp = listlen % leng
-		if listsurp > 0:
-			for j in range(listsurp):
-				list[i].pop(listlen - 1 - j)
-
+def enough_elements(list, leng, testperc, validation):  # return True only if got enough elements to procede
+	elements = int(dim(list)/leng)
+	if elements < 1:
+		return False
+	if int(elements/100*testperc) < 1:
+		return False
+	if validation:
+		if int(elements/100*20) < 1:
+			return False
+	return True
 
 def create_label_array(list,leng):
 	templist=[]
@@ -38,6 +34,35 @@ def create_label_array(list,leng):
 	labelarray=numpy.array(templist).reshape(len(templist),1)
 	labelarray= to_categorical(labelarray,len(Labels),numpy.int64)
 	return labelarray
+
+
+def get_numpy_array(list,n_timesteps,axis):  # create monodimentional list
+	list2 = []
+	for i in range(len(list)):
+		for j in range(len(list[i])):
+			list2.append(list[i][j])
+	# remove empty activities
+	try:
+		list2.remove([])
+	except ValueError:
+		pass
+	arr = numpy.array(list2, numpy.int64).reshape(int(len(list2)/(n_timesteps*axis)), n_timesteps, axis)
+	return arr
+
+
+def get_datas_n_labels(list,n_timesteps,axis):  #return array and labelsarray
+	leng=n_timesteps*axis
+	labelarray = create_label_array(list, leng)
+	arr = get_numpy_array(list,n_timesteps,axis)
+	return arr, labelarray
+
+def remove_extradata(list,leng):
+	for i in range(len(Labels)):
+		listlen = len(list[i])
+		listsurp = listlen % leng
+		if listsurp > 0:
+			for j in range(listsurp):
+				list[i].pop(listlen - 1 - j)
 
 
 def extract_data(list,perc,leng):  # return none if something was wrong with %
@@ -78,47 +103,58 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 		if a[5] == "gyroscope":
 			# will be appended magnitude x y z cause they are in this order in the query result
 			Gyro_list[Labels[a[1]]].append(a[7])
-	# removing surplus data before create numpyarray
+	# removing surplus data before create numpyarrays
 	leng = n_timesteps*axis
 	remove_extradata(ACC_list, leng)
 	remove_extradata(Gyro_list, leng)
+	enough_ACC_elements = enough_elements(ACC_list, leng, testperc, Validation)
+	enough_Gyro_elements = enough_elements(Gyro_list, leng, testperc, Validation)
 
-	ACC_test_list = extract_data(ACC_list, testperc, leng)
-	if ACC_test_list is None:
-		ACC_test_labels = None
-		print("something went wrong with ACC_test creation")
+	ACC_array = ACC_labels = ACC_test = ACC_test_labels = ACC_Validation = ACC_Validation_labels = Gyro_array = \
+		Gyro_labels = Gyro_test = Gyro_test_labels = Gyro_Validation = Gyro_Validation_labels = None
+
+	if enough_ACC_elements:
+		# create ACC_test set
+		ACC_test_list = extract_data(ACC_list, testperc, leng)
+		if ACC_test_list is None:
+			ACC_test = None
+			ACC_test_labels = None
+			print("something went wrong with ACC_test creation")
+		else:
+			ACC_test, ACC_test_labels = get_datas_n_labels(ACC_test_list, n_timesteps, axis)
+
+		# create ACC_Validation set
+		if Validation is True:
+			ACC_Validation_list = extract_data(ACC_list, 20, leng)  # giacomo così faccio il 20% del rimanente, o dovevo farlo del totale?
+			ACC_Validation, ACC_Validation_labels = get_datas_n_labels(ACC_Validation_list, n_timesteps, axis)
+		else:
+			ACC_Validation = ACC_test
+			ACC_Validation_labels = ACC_test_labels
+		if ACC_Validation is None:
+			print("something went wrong with ACC_Validation creation")
+		ACC_array, ACC_labels = get_datas_n_labels(ACC_list, n_timesteps, axis)
 	else:
-		ACC_test_labels = create_label_array(ACC_test_list, leng)
-	Gyro_test_list = extract_data(Gyro_list, testperc, leng)
-	if Gyro_test_list is None:
-		Gyro_test_labels = None
-		print("something went wrong with Gyro_test creation")
+		print("not enough data for Accelerometer sensor")
+
+	if enough_Gyro_elements:
+		# create Gyro_test set
+		Gyro_test_list = extract_data(Gyro_list, testperc, leng)
+		if Gyro_test_list is None:
+			Gyro_test = None
+			Gyro_test_labels = None
+			print("something went wrong with Gyro_test creation")
+		else:
+			Gyro_test, Gyro_test_labels = get_datas_n_labels(Gyro_test_list, n_timesteps, axis)
+		# create Gyro_Validation set
+		if Validation is True:
+			Gyro_Validation_list = extract_data(Gyro_list, 20, leng)  # giacomo così faccio il 20% del rimanente, o dovevo farlo del totale?
+			Gyro_Validation, Gyro_Validation_labels = get_datas_n_labels(Gyro_Validation_list, n_timesteps, axis)
+		else:
+			Gyro_Validation = Gyro_test
+			Gyro_Validation_labels = Gyro_test_labels
+		if Gyro_Validation is None:
+			print("something went wrong with Gyro_Validation creation")
+		Gyro_array, Gyro_labels = get_datas_n_labels(Gyro_list, n_timesteps, axis)
 	else:
-		Gyro_test_labels = create_label_array(Gyro_test_list, leng)
-
-	ACC_test = get_numpy_array(ACC_test_list, n_timesteps, axis)
-	Gyro_test = get_numpy_array(Gyro_test_list, n_timesteps, axis)
-
-	if Validation is True:
-		ACC_Validation_list = extract_data(ACC_list, 20, leng)  # giacomo così faccio il 20% del rimanente, o dovevo farlo del totale?
-		ACC_Validation_labels = create_label_array(ACC_Validation_list, leng)
-		ACC_Validation = get_numpy_array(ACC_Validation_list,n_timesteps,axis)
-		Gyro_Validation_list = extract_data(Gyro_list, 20, leng)  # giacomo così faccio il 20% del rimanente, o dovevo farlo del totale?
-		Gyro_Validation_labels = create_label_array(Gyro_Validation_list, leng)
-		Gyro_Validation = get_numpy_array(Gyro_Validation_list,n_timesteps,axis)
-	else:
-		ACC_Validation = ACC_test
-		ACC_Validation_labels = ACC_test_labels
-		Gyro_Validation = Gyro_test
-		Gyro_Validation_labels = Gyro_test_labels
-	if ACC_Validation is None:
-		print("something went wrong with ACC_Validation creation")
-	if Gyro_Validation is None:
-		print("something went wrong with Gyro_Validation creation")
-
-	ACC_labels = create_label_array(ACC_list, leng)
-	Gyro_labels = create_label_array(Gyro_list, leng)
-
-	ACC_array = get_numpy_array(ACC_list, n_timesteps, axis)
-	Gyro_array = get_numpy_array(Gyro_list, n_timesteps, axis)
+		print("not enough data for Gyroscope sensor")
 	return ACC_array, ACC_labels, ACC_test, ACC_test_labels, ACC_Validation, ACC_Validation_labels, Gyro_array, Gyro_labels, Gyro_test, Gyro_test_labels, Gyro_Validation, Gyro_Validation_labels
