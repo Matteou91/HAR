@@ -107,6 +107,7 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 	leng = n_timesteps*axis
 	remove_extradata(ACC_list, leng)
 	remove_extradata(Gyro_list, leng)
+
 	enough_ACC_elements = enough_elements(ACC_list, leng, testperc, Validation)
 	enough_Gyro_elements = enough_elements(Gyro_list, leng, testperc, Validation)
 
@@ -116,12 +117,7 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 	if enough_ACC_elements:
 		# create ACC_test set
 		ACC_test_list = extract_data(ACC_list, testperc, leng)
-		if ACC_test_list is None:
-			ACC_test = None
-			ACC_test_labels = None
-			print("FROM Prepare_Data: something went wrong with ACC_test creation")
-		else:
-			ACC_test, ACC_test_labels = get_datas_n_labels(ACC_test_list, n_timesteps, axis)
+		ACC_test, ACC_test_labels = get_datas_n_labels(ACC_test_list, n_timesteps, axis)
 
 		# create ACC_Validation set
 		if Validation is True:
@@ -130,8 +126,6 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 		else:
 			ACC_Validation = ACC_test
 			ACC_Validation_labels = ACC_test_labels
-		if ACC_Validation is None:
-			print("FROM Prepare_Data: something went wrong with ACC_Validation creation")
 		ACC_array, ACC_labels = get_datas_n_labels(ACC_list, n_timesteps, axis)
 	else:
 		print("FROM Prepare_Data: not enough data for Accelerometer sensor")
@@ -139,12 +133,7 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 	if enough_Gyro_elements:
 		# create Gyro_test set
 		Gyro_test_list = extract_data(Gyro_list, testperc, leng)
-		if Gyro_test_list is None:
-			Gyro_test = None
-			Gyro_test_labels = None
-			print("FROM Prepare_Data: something went wrong with Gyro_test creation")
-		else:
-			Gyro_test, Gyro_test_labels = get_datas_n_labels(Gyro_test_list, n_timesteps, axis)
+		Gyro_test, Gyro_test_labels = get_datas_n_labels(Gyro_test_list, n_timesteps, axis)
 		# create Gyro_Validation set
 		if Validation is True:
 			Gyro_Validation_list = extract_data(Gyro_list, 20, leng)  # giacomo così faccio il 20% del rimanente, o dovevo farlo del totale?
@@ -152,8 +141,6 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 		else:
 			Gyro_Validation = Gyro_test
 			Gyro_Validation_labels = Gyro_test_labels
-		if Gyro_Validation is None:
-			print("FROM Prepare_Data: something went wrong with Gyro_Validation creation")
 		Gyro_array, Gyro_labels = get_datas_n_labels(Gyro_list, n_timesteps, axis)
 	else:
 		print("FROM Prepare_Data: not enough data for Gyroscope sensor")
