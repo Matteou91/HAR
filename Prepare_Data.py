@@ -119,7 +119,7 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 		if ACC_test_list is None:
 			ACC_test = None
 			ACC_test_labels = None
-			print("something went wrong with ACC_test creation")
+			print("FROM Prepare_Data: something went wrong with ACC_test creation")
 		else:
 			ACC_test, ACC_test_labels = get_datas_n_labels(ACC_test_list, n_timesteps, axis)
 
@@ -131,10 +131,10 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 			ACC_Validation = ACC_test
 			ACC_Validation_labels = ACC_test_labels
 		if ACC_Validation is None:
-			print("something went wrong with ACC_Validation creation")
+			print("FROM Prepare_Data: something went wrong with ACC_Validation creation")
 		ACC_array, ACC_labels = get_datas_n_labels(ACC_list, n_timesteps, axis)
 	else:
-		print("not enough data for Accelerometer sensor")
+		print("FROM Prepare_Data: not enough data for Accelerometer sensor")
 
 	if enough_Gyro_elements:
 		# create Gyro_test set
@@ -142,7 +142,7 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 		if Gyro_test_list is None:
 			Gyro_test = None
 			Gyro_test_labels = None
-			print("something went wrong with Gyro_test creation")
+			print("FROM Prepare_Data: something went wrong with Gyro_test creation")
 		else:
 			Gyro_test, Gyro_test_labels = get_datas_n_labels(Gyro_test_list, n_timesteps, axis)
 		# create Gyro_Validation set
@@ -153,8 +153,8 @@ def Prepare_Data(Json, Classifier_name, Validation, testperc):
 			Gyro_Validation = Gyro_test
 			Gyro_Validation_labels = Gyro_test_labels
 		if Gyro_Validation is None:
-			print("something went wrong with Gyro_Validation creation")
+			print("FROM Prepare_Data: something went wrong with Gyro_Validation creation")
 		Gyro_array, Gyro_labels = get_datas_n_labels(Gyro_list, n_timesteps, axis)
 	else:
-		print("not enough data for Gyroscope sensor")
+		print("FROM Prepare_Data: not enough data for Gyroscope sensor")
 	return ACC_array, ACC_labels, ACC_test, ACC_test_labels, ACC_Validation, ACC_Validation_labels, Gyro_array, Gyro_labels, Gyro_test, Gyro_test_labels, Gyro_Validation, Gyro_Validation_labels

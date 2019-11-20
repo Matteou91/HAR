@@ -21,22 +21,18 @@ def Delete_Model(UserName, txt, ClassifierName=None, ModelName=None):
 						if exists(Path + ".h5"):
 							remove(Path + ".h5")
 						else:
-							print(Path + ".h5 doesn't exist")
+							print("FROM Delete_Model: " + Path + ".h5 doesn't exist")
 						if txt:
 							if exists(Path + ".txt"):
 								remove(Path + ".txt")
 							else:
-								print(Path + ".txt doesn't exist")
+								print("FROM Delete_Model: " + Path + ".txt doesn't exist")
 				else:
-					print("This user have not models created with " + ClassifierName + " Classifier")
+					print("FROM Delete_Model: This user have not models created with " + ClassifierName + " Classifier")
 		else:
-			print("User have not models")
+			print("FROM Delete_Model: User have not models")
 	else:
-		print("Model_Path not found")
-
-
-def InsertNewClassifier():  # giacomo essendo su un'altra macchina come presumo mi arrivi il file?
-	print("da implementare")
+		print("FROM Delete_Model: Model_Path not found")
 
 
 # return none if something went wrong,else return file path
@@ -51,7 +47,7 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 			if exists(Path):
 				return Path
 			else:
-				print("No Models for this User and this Classifier")
+				print("FROM getTrainedModel: No Models for this User and this Classifier")
 				return None
 		else:
 			CheckPath = Model_Path + "User_" + Ticket.split("_")[1] + "/" +Ticket.split("_")[0] + "/"
@@ -61,14 +57,18 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 				if exists(Path):
 					return Path
 				else:
-					print("This Model doesn't exist")
+					print("FROM getTrainedModel: This Model doesn't exist")
 					return None
 			else:
-				print("Username or Classifier Name different from Ticket")
+				print("FROM getTrainedModel: Username or Classifier Name different from Ticket")
 				return None
 	else:
-		print("Wrong Username or Classifier Name")
+		print("FROM getTrainedModel: Wrong Username or Classifier Name")
 		return None
+
+
+def InsertNewClassifier():  # giacomo essendo su un'altra macchina come presumo mi arrivi il file?
+	print("da implementare")
 
 
 #print(getTrainedModel("GiacomoGiorgi", "Classifier1","Classifier1_GiacomoGiorgi__2019-11-1418:04:54.6045082"))
