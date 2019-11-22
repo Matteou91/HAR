@@ -90,15 +90,15 @@ def Train_Classifier(classifierName, activity, axes, device, probability, sensor
         file = open(Model_Path + "User_" + user+'/'+classifierName+'/'+"Model_info.Json", 'r')
         try:
             Models = json.load(file)
-            file.close()
-            Models.update({filename: "error"})
-            file = open(Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json", 'w')
-            json.dump(Models, file)
-            file.close()
         except:
             file.close()
             print("From Train_Classifier: " + Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json is corrupted")
             return None
+        file.close()
+        Models.update({filename: "in_progress"})
+        file = open(Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json", 'w')
+        json.dump(Models, file)
+        file.close()
     # let another thread finish execute code and give back the ticket to client
     thread = Thread(target=fit_network_thread, args=(filename, classifierName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc, ag, Validation, cross_val_repeat,))
     thread.start()
