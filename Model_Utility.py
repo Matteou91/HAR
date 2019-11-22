@@ -8,6 +8,10 @@ from Info.Paths import Model_Path
 
 
 def Delete_Model(UserName, txt, ClassifierName=None, ModelName=None):
+	# only UserName remove all User space
+	# UserName + ClassifierName remove all models in User_UserName/ClassifierName/
+	# UserName + ClassifierName + ModelName only User_UserName/ClassifierName/ModelName.h5
+
 	if exists(Model_Path[0:(len(Model_Path) - 1)]):  # don't consider "/"
 		Path = Model_Path + "User_" + UserName
 		if exists(Path):
@@ -72,6 +76,8 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 
 
 def InsertNewClassifier(model, model_name, user_name, classifier_name):  # NEVER use _ or / in model_name
+	# insert model as User_user_name/classifier_name/model_name.h5
+
 	# creating working space if not exist
 	if not exists(Model_Path[0:(len(Model_Path) - 1)]):
 		makedirs(Model_Path[0:(len(Model_Path) - 1)])

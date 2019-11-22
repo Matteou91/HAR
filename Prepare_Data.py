@@ -90,15 +90,17 @@ def Prepare_Data(Json, Classifier_name, Xvalidation, testperc, ag = 0):
 	# need modify to use cross validation
 	json_acceptable_string = Json.replace("'", "\"")
 	Json = json.loads(json_acceptable_string)
+
 	# need to know n° of timesteps for each timeseries
 	model = load_model(Classifier_Path + Classifier_name + ".h5")
+
+	# imput shape is determined from Classifier
 	n_timesteps = model.layers[0].input_shape[1]
 	axis = model.layers[0].input_shape[2]
-	# type could be train validation or test
-	# using lists cause i need to order depending from labels
 
+	# using lists cause i need to order depending from labels
 	list = []
-	for i in range(len(Labels)):
+	for i in range(len(Labels)):  # list init
 		# adding enough assix as much as existing labels
 		list.append([])
 
@@ -110,27 +112,36 @@ def Prepare_Data(Json, Classifier_name, Xvalidation, testperc, ag = 0):
 			# will be appended magnitude x y z cause they are in this order in the query result
 			list[Labels[a[1]]].append(a[7])
 		if ag == 0:
-			# will be appended magnitude x y z cause they are in this order in the query result
+			# will be appended ACC(magnitude x y z) and Gyro(magnitude x y z) cause they are in this order in the query result
 			list[Labels[a[1]]].append(a[7])
+
 	leng = n_timesteps * axis
+
 	# removing surplus data before create numpyarrays
 	remove_extradata(list, leng)  # double axis
+
+	# check if there are enough elements to procede
 	list_enough_elements = enough_elements(list, leng , testperc, Xvalidation)
 	if list_enough_elements:
 		array = labels = test = test_labels = Validation = Validation_labels = None
-		# create test set
-		test_list = extract_data(list, testperc, leng )
-		test, test_labels = get_datas_n_labels(test_list, n_timesteps, axis)
+		try:
+			# create test set
+			test_list = extract_data(list, testperc, leng )
+			test, test_labels = get_datas_n_labels(test_list, n_timesteps, axis)
 
-		# create Validation set
-		if Xvalidation is True:
-			Validation_list = extract_data(list, 20, leng)
-			Validation, Validation_labels = get_datas_n_labels(Validation_list, n_timesteps, axis)
-		else:
-			Validation = test
-			Validation_labels = test_labels
-		array, labels = get_datas_n_labels(list, n_timesteps, axis)
-		return array, labels, test, test_labels, Validation, Validation_labels
+			# create Validation set
+			if Xvalidation is True:
+				Validation_list = extract_data(list, 20, leng)
+				Validation, Validation_labels = get_datas_n_labels(Validation_list, n_timesteps, axis)
+			else:
+				Validation = test
+				Validation_labels = test_labels
+			array, labels = get_datas_n_labels(list, n_timesteps, axis)
+			return array, labels, test, test_labels, Validation, Validation_labels
+		except:
+			print("FROM Prepare_Data: got errors while preparing datas")
+			return array, labels, test, test_labels, Validation, Validation_labels
+
 	else:
 		print("FROM Prepare_Data: not enough data for Accelerometer sensor")
 		return None, None, None, None, None, None

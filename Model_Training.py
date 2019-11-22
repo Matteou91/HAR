@@ -82,6 +82,7 @@ def Train_Classifier(classifierName, activity, axes, device, probability, sensor
     ticket = classifierName + "_" + user + "__" + now
     filename = Model_Path + "User_" + user+'/' + classifierName + '/' + ticket
 
+    # creating Model_info.Json and check if is in a consistent state
     if not exists(Model_Path + "User_" + user+'/'+classifierName+'/'+"Model_info.Json"):
         file = open(Model_Path + "User_" + user+'/'+classifierName+'/'+"Model_info.Json", 'w')
         file.write("{\n}\n")
@@ -99,6 +100,7 @@ def Train_Classifier(classifierName, activity, axes, device, probability, sensor
         file = open(Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json", 'w')
         json.dump(Models, file)
         file.close()
+
     # let another thread finish execute code and give back the ticket to client
     thread = Thread(target=fit_network_thread, args=(filename, classifierName, activity, axes, device, probability, sensor, user, timestart, timeend, verbose, epochs, batch_size, testperc, ag, Validation, cross_val_repeat,))
     thread.start()

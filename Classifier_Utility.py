@@ -5,7 +5,7 @@ from keras.models import load_model
 from Info.Paths import Classifier_Path
 
 
-def Delete_Classifier(ClassifierName=None):  # name without extension, default delete all
+def Delete_Classifier(ClassifierName=None):  # name without extension, default(ClassifierName=None) delete all
 	Path = Classifier_Path[0:(len(Classifier_Path)-1)]  # don't consider "/"
 	if exists(Path):
 		if ClassifierName==None:
@@ -27,7 +27,7 @@ def InsertNewClassifier(classifier, classifierName):  # NEVER use _ or / in clas
 	classifier.save(Classifier_Path + classifierName + ".h5")
 
 
-def GetClassifier(classifierName):
+def GetClassifier(classifierName):  # name without extension
 	if not exists(Classifier_Path + classifierName + ".h5"):
 		print("From GetClassifier: " + Classifier_Path + classifierName + " doesn't exist")
 		return None
