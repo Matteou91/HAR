@@ -23,16 +23,50 @@ def Delete_Model(UserName, txt, ClassifierName=None, ModelName=None):
 					if ModelName is None:
 						shutil.rmtree(Path, ignore_errors=True)
 					else:
+						info_path = Path + "/Model_info.Json"
 						Path += "/" + ModelName
 						if exists(Path + ".h5"):
-							remove(Path + ".h5")
+							if exists(info_path):
+								info_file = open(info_path)
+								try:
+									Models = json.load(info_file)
+									info_file.close()
+									result = Models.pop(ModelName, None)
+									if result is None:
+										remove(Path + ".h5")
+										print("From Delete_Model: Removed " + Path + ".h5 , NOT FOUND in Model_info.Json")
+										if txt:
+											if exists(Path + ".txt"):
+												remove(Path + ".txt")
+											else:
+												print("FROM Delete_Model: " + Path + ".txt doesn't exist")
+									else:
+										if result == "ready":
+											print("result is ready")
+											info_file = open(info_path,"w")
+											json.dump(Models, info_file)
+											info_file.close()
+											remove(Path + ".h5")
+											print("From Delete_Model: Removed "+ Path + ".h5")
+											if txt:
+												if exists(Path + ".txt"):
+													remove(Path + ".txt")
+												else:
+													print("FROM Delete_Model: " + Path + ".txt doesn't exist")
+										else:
+											print("From Delete_Model: Can't remove "+ Path + ".h5 , Status = " + result)
+								except:
+									print("From Delete_Model: " + info_path + " is corrupted, model not removed")
+									info_file.close()
+							else:
+								remove(Path + ".h5")
+								if txt:
+									if exists(Path + ".txt"):
+										remove(Path + ".txt")
+									else:
+										print("FROM Delete_Model: " + Path + ".txt doesn't exist")
 						else:
 							print("FROM Delete_Model: " + Path + ".h5 doesn't exist")
-						if txt:
-							if exists(Path + ".txt"):
-								remove(Path + ".txt")
-							else:
-								print("FROM Delete_Model: " + Path + ".txt doesn't exist")
 				else:
 					print("FROM Delete_Model: This user have not models created with " + ClassifierName + " Classifier")
 		else:
@@ -108,3 +142,25 @@ def InsertNewClassifier(model, model_name, user_name, classifier_name):  # NEVER
 	if exists(Path + model_name + ".h5"):
 		print("From InsertNewClassifier: " + Model_Path + model_name + " already exist, overwriting")
 	model.save(Path + model_name + ".h5")
+
+
+def get_Models_Name():  # return all the Classifier name in the classifier folder
+	if exists(Model_Path[0:(len(Model_Path)-1)]):
+		for file in glob.glob(Model_Path + "*/*/" + "*.h5"):
+			name = str(file)
+			path = name.split("/")
+			path = path[0] + "/" + path[1] + "/" + path[2]
+			name = name.split(".")[0] + "." + name.split(".")[1]
+			name = name.split("/")
+			name = name[len(name)-1]
+			if exists(path + "/Model_info.Json"):
+				info_file = open(path + "/Model_info.Json", 'r')
+				try:
+					Models = json.load(info_file)
+					print(name + "   Status = " + Models[name])
+				except:
+					print(name)
+			else:
+				print(name)
+
+Delete_Model("GiacomoGiorgi", 0, "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2211:19:18.237318 (copia)")

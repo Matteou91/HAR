@@ -37,29 +37,37 @@ def fit_network_thread(filename, classifierName, activity, axes, device, probabi
             return
         info_file.close()
         info_file = open(file_info, 'w')
+        ticket = filename.split(".")[0]
+        ticket = ticket.split("/")[len(ticket.split("/"))-1]
         if array is None or labels is None or test is None or test_labels is None or Validation is None or Validation_labels is None:
             print("From fit_network_thread: something went wrong with parameters creation, please try again")
-            Models.update({filename: "error"})
+            Models.update({ticket: "error"})
             json.dump(Models, info_file)
             info_file.close()
         else:
-            scores = list()
-            model = load_model(Classifier_Path + classifierName + '.h5')
-            with open(filename + '.txt', 'a') as file:  # putting stats inside filename.txt
-                with redirect_stdout(file):
-                    for r in range(cross_val_repeat):
-                        model.fit(array, labels, epochs=epochs, batch_size=batch_size, verbose=verbose, validation_data=(Validation, Validation_labels))
-                        _, accuracy = model.evaluate(test, test_labels, batch_size=batch_size, verbose=1)  # evaluate model
-                        score = accuracy
-                        score = score * 100.0
-                        print('>#%d: %.3f' % (r + 1, score))
-                        scores.append(score)
-                    model.save(filename + '.h5')
-                    summarize_results(scores)
-                    file.close()
-            Models.update({filename: "ready"})
-            json.dump(Models, info_file)
-            info_file.close()
+            try:
+                scores = list()
+                model = load_model(Classifier_Path + classifierName + '.h5')
+                with open(filename + '.txt', 'a') as file:  # putting stats inside filename.txt
+                    with redirect_stdout(file):
+                        for r in range(cross_val_repeat):
+                            model.fit(array, labels, epochs=epochs, batch_size=batch_size, verbose=verbose, validation_data=(Validation, Validation_labels))
+                            _, accuracy = model.evaluate(test, test_labels, batch_size=batch_size, verbose=1)  # evaluate model
+                            score = accuracy
+                            score = score * 100.0
+                            print('>#%d: %.3f' % (r + 1, score))
+                            scores.append(score)
+                        model.save(filename + '.h5')
+                        summarize_results(scores)
+                        file.close()
+                Models.update({ticket: "ready"})
+                json.dump(Models, info_file)
+                info_file.close()
+            except:
+                Models.update({ticket: "error"})
+                json.dump(Models, info_file)
+                info_file.close()
+                print("From fit_network_thread: error during creation of " + ticket)
     else:
         print("From fit_network_thread: " + file_info + " does not exist")
 
@@ -96,7 +104,7 @@ def Train_Classifier(classifierName, activity, axes, device, probability, sensor
             print("From Train_Classifier: " + Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json is corrupted")
             return None
         file.close()
-        Models.update({filename: "in_progress"})
+        Models.update({ticket: "in_progress"})
         file = open(Model_Path + "User_" + user + '/' + classifierName + '/' + "Model_info.Json", 'w')
         json.dump(Models, file)
         file.close()
