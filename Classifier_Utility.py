@@ -1,5 +1,5 @@
 from os import remove
-from os.path import exists,join
+from os.path import exists, join
 import glob
 from Info.Paths import Classifier_Path
 
@@ -20,12 +20,23 @@ def Delete_Classifier(ClassifierName=None):  # name without extension, default d
 		print("FROM Delete_Classifier: Classifier_Path not found")
 
 
-def InsertNewClassifier():  # giacomo essendo su un'altra macchina come presumo mi arrivi il file?
-	print()
+def InsertNewClassifier(classifier, classifierName):
+	if exists(Classifier_Path + classifierName + ".h5"):
+		print("From InsertNewClassifier: " + Classifier_Path + classifierName + " already exist, overwriting")
+	file = open(Classifier_Path + classifierName + ".h5", "w")
+	file.write(classifier)
+	file.close()
 
 
-def GetClassifier():  # giacomo cosa mi deve restituire?file aperto o indirizzo? lo ottengo tramite nome?
-	print()
+def GetClassifier(classifierName):
+	if not exists(Classifier_Path + classifierName + ".h5"):
+		print("From GetClassifier: " + Classifier_Path + classifierName + " doesn't exist")
+		return None
+	else:
+		file = open(Classifier_Path + classifierName + ".h5")
+		temp_file = file
+		file.close()
+		return temp_file
 
 
 def get_Classifiers_Name():  # return all the Classifier name in the classifier folder

@@ -3,7 +3,6 @@ from Info.Paths import Classifier_Path
 from keras.models import load_model
 from keras.utils import to_categorical
 from Info.DataInfo import Labels
-from numpy import empty
 import numpy
 
 
@@ -94,6 +93,7 @@ def Prepare_Data(Json, Classifier_name, Xvalidation, testperc, ag = 0):
 	# need to know n° of timesteps for each timeseries
 	model = load_model(Classifier_Path + Classifier_name + ".h5")
 	n_timesteps = model.layers[0].input_shape[1]
+	axis = model.layers[0].input_shape[2]
 	# type could be train validation or test
 	# using lists cause i need to order depending from labels
 
@@ -112,11 +112,7 @@ def Prepare_Data(Json, Classifier_name, Xvalidation, testperc, ag = 0):
 		if ag == 0:
 			# will be appended magnitude x y z cause they are in this order in the query result
 			list[Labels[a[1]]].append(a[7])
-	axis = 4
 	leng = n_timesteps * axis
-	if ag == 0:
-		leng = leng * 2
-		axis = axis * 2
 	# removing surplus data before create numpyarrays
 	remove_extradata(list, leng)  # double axis
 	list_enough_elements = enough_elements(list, leng , testperc, Xvalidation)
