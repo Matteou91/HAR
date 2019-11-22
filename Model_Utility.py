@@ -163,4 +163,5 @@ def get_Models_Name():  # return all the Classifier name in the classifier folde
 			else:
 				print(name)
 
-Delete_Model("GiacomoGiorgi", 0, "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2211:19:18.237318 (copia)")
+#Delete_Model("GiacomoGiorgi", 1, "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2211:19:18.237318 (copia)")
+InsertNewClassifier(getTrainedModel("GiacomoGiorgi", "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2213:29:17.272628"), "Classifier64810_GiacomoGiorgi__2019-11-2213:29:17.272628NEW", "GiacomoGiorgi", "Classifier64810")

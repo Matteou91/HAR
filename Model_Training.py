@@ -37,7 +37,7 @@ def fit_network_thread(filename, classifierName, activity, axes, device, probabi
             return
         info_file.close()
         info_file = open(file_info, 'w')
-        ticket = filename.split(".")[0]
+        ticket = filename.split(".")[0] + "." + filename.split(".")[1]
         ticket = ticket.split("/")[len(ticket.split("/"))-1]
         if array is None or labels is None or test is None or test_labels is None or Validation is None or Validation_labels is None:
             print("From fit_network_thread: something went wrong with parameters creation, please try again")
