@@ -1,6 +1,7 @@
 from os import remove
 from os.path import exists, join
 import glob
+from keras.models import load_model
 from Info.Paths import Classifier_Path
 
 
@@ -20,12 +21,10 @@ def Delete_Classifier(ClassifierName=None):  # name without extension, default d
 		print("FROM Delete_Classifier: Classifier_Path not found")
 
 
-def InsertNewClassifier(classifier, classifierName):
+def InsertNewClassifier(classifier, classifierName):  # NEVER use _ or / in classifierName
 	if exists(Classifier_Path + classifierName + ".h5"):
 		print("From InsertNewClassifier: " + Classifier_Path + classifierName + " already exist, overwriting")
-	file = open(Classifier_Path + classifierName + ".h5", "w")
-	file.write(classifier)
-	file.close()
+	classifier.save(Classifier_Path + classifierName + ".h5")
 
 
 def GetClassifier(classifierName):
@@ -33,10 +32,8 @@ def GetClassifier(classifierName):
 		print("From GetClassifier: " + Classifier_Path + classifierName + " doesn't exist")
 		return None
 	else:
-		file = open(Classifier_Path + classifierName + ".h5")
-		temp_file = file
-		file.close()
-		return temp_file
+		model = load_model(Classifier_Path + classifierName + ".h5")
+		return model
 
 
 def get_Classifiers_Name():  # return all the Classifier name in the classifier folder
@@ -47,3 +44,5 @@ def get_Classifiers_Name():  # return all the Classifier name in the classifier 
 			name = name.split("/")
 			name = name[len(name)-1]
 			print(name)
+
+InsertNewClassifier(GetClassifier("Classifier_64_8_10"),"Classifier_64_8_10_")

@@ -2,6 +2,8 @@ from os import remove
 from os.path import exists, join, getctime
 import shutil
 import glob
+import json
+from keras.models import load_model
 from Info.Paths import Model_Path
 
 
@@ -45,7 +47,8 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 			latest_file = max(list_of_files, key=getctime)
 			Path += latest_file
 			if exists(Path):
-				return Path
+				model = load_model(Path)
+				return model
 			else:
 				print("FROM getTrainedModel: No Models for this User and this Classifier")
 				return None
@@ -55,7 +58,8 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 			if Path == CheckPath:
 				Path += Ticket + ".h5"
 				if exists(Path):
-					return Path
+					model = load_model(Path)
+					return model
 				else:
 					print("FROM getTrainedModel: This Model doesn't exist")
 					return None
@@ -67,9 +71,34 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 		return None
 
 
-def InsertNewClassifier():  # giacomo essendo su un'altra macchina come presumo mi arrivi il file?
-	print("da implementare")
+def InsertNewClassifier(model, model_name, user_name, classifier_name):  # NEVER use _ or / in model_name
+	# creating working space if not exist
+	if not exists(Model_Path[0:(len(Model_Path) - 1)]):
+		makedirs(Model_Path[0:(len(Model_Path) - 1)])
+	if not exists(Model_Path + "User_" + user_name):
+		makedirs(Model_Path + "User_" + user_name)
+	if not exists(Model_Path + "User_" + user_name + '/' + classifier_name):
+		makedirs(Model_Path + "User_" + user_name + '/' + classifier_name)
 
-
-#print(getTrainedModel("GiacomoGiorgi", "Classifier1","Classifier1_GiacomoGiorgi__2019-11-1418:04:54.6045082"))
-# Delete_Model("Prova1",True,"Classifier1","Classifier1_GiacomoGiorgi__2019-11-1418:03:31.594630")
+	# ticket that give back to client
+	Path = Model_Path + "User_" + user_name + '/' + classifier_name + '/'
+	if not exists(Path + "Model_info.Json"):
+		file = open(Path + "Model_info.Json", 'w')
+		file.write("{\n}\n")
+		file.close()
+	else:
+		file = open(Path + "Model_info.Json", 'r')
+		try:
+			Models = json.load(file)
+		except:
+			file.close()
+			print("From Train_Classifier: " + Path + "Model_info.Json is corrupted")
+			return None
+		file.close()
+		Models.update({model_name: "ready"})
+		file = open(Path + "Model_info.Json", 'w')
+		json.dump(Models, file)
+		file.close()
+	if exists(Path + model_name + ".h5"):
+		print("From InsertNewClassifier: " + Model_Path + model_name + " already exist, overwriting")
+	model.save(Path + model_name + ".h5")

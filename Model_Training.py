@@ -104,4 +104,4 @@ def Train_Classifier(classifierName, activity, axes, device, probability, sensor
     thread.start()
     return ticket
 
-print("ticket = ",Train_Classifier("Classifier_64_8_10" , None, None, None, None, None, "GiacomoGiorgi", None, None, 1, 2, 64 , 20 , 0, True , 1))
+print("ticket = ",Train_Classifier("Classifier64810" , None, None, None, None, None, "GiacomoGiorgi", None, None, 1, 2, 64 , 20 , 0, True , 1))
