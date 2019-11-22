@@ -109,7 +109,7 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 		return None
 
 
-def InsertNewClassifier(model, model_name, user_name, classifier_name):  # NEVER use _ or / in model_name
+def InsertNewModel(model, model_name, user_name, classifier_name):  # NEVER use _ or / in model_name
 	# insert model as User_user_name/classifier_name/model_name.h5
 
 	# creating working space if not exist
