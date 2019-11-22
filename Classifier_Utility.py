@@ -44,5 +44,3 @@ def get_Classifiers_Name():  # return all the Classifier name in the classifier 
 			name = name.split("/")
 			name = name[len(name)-1]
 			print(name)
-
-InsertNewClassifier(GetClassifier("Classifier_64_8_10"),"Classifier_64_8_10_")
