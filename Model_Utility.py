@@ -126,22 +126,24 @@ def InsertNewClassifier(model, model_name, user_name, classifier_name):  # NEVER
 		file = open(Path + "Model_info.Json", 'w')
 		file.write("{\n}\n")
 		file.close()
-	else:
-		file = open(Path + "Model_info.Json", 'r')
-		try:
-			Models = json.load(file)
-		except:
-			file.close()
-			print("From Train_Classifier: " + Path + "Model_info.Json is corrupted")
-			return None
+	file = open(Path + "Model_info.Json", 'r')
+	try:
+		Models = json.load(file)
+	except:
 		file.close()
+		print("From Train_Classifier: " + Path + "Model_info.Json is corrupted")
+		return None
+	file.close()
+	try:
+		model.save(Path + model_name + ".h5")
+		if exists(Path + model_name + ".h5"):
+			print("From InsertNewClassifier: " + Model_Path + model_name + " already exist, overwriting")
 		Models.update({model_name: "ready"})
 		file = open(Path + "Model_info.Json", 'w')
 		json.dump(Models, file)
 		file.close()
-	if exists(Path + model_name + ".h5"):
-		print("From InsertNewClassifier: " + Model_Path + model_name + " already exist, overwriting")
-	model.save(Path + model_name + ".h5")
+	except:
+		print("From InsertNewClassifier: invalid model")
 
 
 def get_Models_Name():  # return all the Classifier name in the classifier folder
@@ -164,4 +166,4 @@ def get_Models_Name():  # return all the Classifier name in the classifier folde
 				print(name)
 
 #Delete_Model("GiacomoGiorgi", 1, "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2211:19:18.237318 (copia)")
-InsertNewClassifier(getTrainedModel("GiacomoGiorgi", "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2213:29:17.272628"), "Classifier64810_GiacomoGiorgi__2019-11-2213:29:17.272628NEW", "GiacomoGiorgi", "Classifier64810")
+InsertNewClassifier(getTrainedModel("GiacomoGiorgi", "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.35011"), "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.350115NEW", "GiacomoGiorgi", "Classifier64810")
