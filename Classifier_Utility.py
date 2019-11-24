@@ -11,10 +11,17 @@ def Delete_Classifier(ClassifierName=None):  # name without extension, default(C
 		if ClassifierName==None:
 			filelist = glob.glob(join(Path, "*.h5"))
 			for f in filelist:
-				remove(f)
+				try:
+					remove(f)
+				except:
+					print("FROM Delete_Classifier: got problem while removing " + f )
+					pass
 		else:
 			if exists(Classifier_Path+ClassifierName+".h5"):
-				remove(Classifier_Path+ClassifierName+".h5")
+				try:
+					remove(Classifier_Path+ClassifierName+".h5")
+				except:
+					print("FROM Delete_Classifier: got problem while removing " + Classifier_Path + ClassifierName + ".h5")
 			else:
 				print("FROM Delete_Classifier: "+ClassifierName+".h5 doesn't exist")
 	else:
