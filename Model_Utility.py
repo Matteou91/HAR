@@ -154,9 +154,24 @@ def InsertNewModel(model, model_name, user_name, classifier_name):  # NEVER use 
 		print("From InsertNewClassifier: invalid model")
 
 
-def get_Models_Name():  # return all the Classifier name in the classifier folder
+def get_Models_Name(user_name=None, classifier_name=None):  # return all the Classifier name in the classifier folder
 	if exists(Model_Path[0:(len(Model_Path)-1)]):
-		for file in glob.glob(Model_Path + "*/*/" + "*.h5"):
+		folder = Model_Path
+		if user_name is not None:
+			folder += "User_" + user_name
+			if not exists(folder):
+				print("From get_Models_Name : " + folder +" doesn't exist")
+				return
+			if classifier_name is not None:
+				folder += "/" + classifier_name + "/"
+				if not exists(folder):
+					print("From get_Models_Name : " + folder + " doesn't exist")
+					return
+			else:
+				folder += "/*/"
+		else:
+			folder += "*/*/"
+		for file in glob.glob(folder + "*.h5"):
 			name = str(file)
 			path = name.split("/")
 			path = path[0] + "/" + path[1] + "/" + path[2]
