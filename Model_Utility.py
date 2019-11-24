@@ -75,7 +75,7 @@ def Delete_Model(UserName, txt, ClassifierName=None, ModelName=None):
 		print("FROM Delete_Model: Model_Path not found")
 
 
-# return none if something went wrong,else return file path
+# return none if something went wrong,else return model
 # return Ticket Model if specified,return last created model if Ticket is None
 def getTrainedModel(UserName, ClassifierName, Ticket=None):
 	Path = Model_Path + "User_" + UserName + "/" + ClassifierName + "/"

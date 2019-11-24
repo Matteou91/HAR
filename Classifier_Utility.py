@@ -50,7 +50,7 @@ def GetClassifier(classifierName):  # name without extension
 			return None
 
 
-def get_Classifiers_Name():  # return all the Classifier name in the classifier folder
+def get_Classifiers_Name():  # return names of all the Classifier name in the classifier folder
 	if exists(Classifier_Path[0:(len(Classifier_Path)-1)]):
 		for file in glob.glob(Classifier_Path+"*.h5"):
 			name = str(file)
