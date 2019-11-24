@@ -85,8 +85,12 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 			latest_file = max(list_of_files, key=getctime)
 			Path += latest_file
 			if exists(Path):
-				model = load_model(Path)
-				return model
+				try:
+					model = load_model(Path)
+					return model
+				except:
+					print("FROM getTrainedModel: got problem while loading " + Path + " returning None")
+					return None
 			else:
 				print("FROM getTrainedModel: No Models for this User and this Classifier")
 				return None
@@ -96,8 +100,12 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 			if Path == CheckPath:
 				Path += Ticket + ".h5"
 				if exists(Path):
-					model = load_model(Path)
-					return model
+					try:
+						model = load_model(Path)
+						return model
+					except:
+						print("FROM getTrainedModel: got problem while loading " + Path + " returning None")
+						return None
 				else:
 					print("FROM getTrainedModel: This Model doesn't exist")
 					return None

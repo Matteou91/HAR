@@ -24,7 +24,10 @@ def Delete_Classifier(ClassifierName=None):  # name without extension, default(C
 def InsertNewClassifier(classifier, classifierName):  # NEVER use _ or / in classifierName
 	if exists(Classifier_Path + classifierName + ".h5"):
 		print("From InsertNewClassifier: " + Classifier_Path + classifierName + " already exist, overwriting")
-	classifier.save(Classifier_Path + classifierName + ".h5")
+	try:
+		classifier.save(Classifier_Path + classifierName + ".h5")
+	except:
+		print("From InsertNewClassifier: got problems while saving model " + classifierName)
 
 
 def GetClassifier(classifierName):  # name without extension
@@ -32,8 +35,12 @@ def GetClassifier(classifierName):  # name without extension
 		print("From GetClassifier: " + Classifier_Path + classifierName + " doesn't exist")
 		return None
 	else:
-		model = load_model(Classifier_Path + classifierName + ".h5")
-		return model
+		try:
+			model = load_model(Classifier_Path + classifierName + ".h5")
+			return model
+		except:
+			print("From GetClassifier: got problem while loading " + Classifier_Path + classifierName + " returning None")
+			return None
 
 
 def get_Classifiers_Name():  # return all the Classifier name in the classifier folder
