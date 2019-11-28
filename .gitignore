@@ -1,2 +1,5 @@
 # Project exclude paths
 /venv/
+/Classifier/
+/Models/
+/UCI HAR Dataset/

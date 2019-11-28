@@ -188,5 +188,20 @@ def get_Models_Name(user_name=None, classifier_name=None):  # return all the Cla
 			else:
 				print(name)
 
+
+# return none if something went wrong,else return Ticket.txt
+def getModelInfo(Ticket):
+	Path = Model_Path + "User_" + Ticket.split("_")[1] + "/" +Ticket.split("_")[0] + "/" + Ticket + ".txt"
+	if exists(Path):
+		file = open(Path)
+		content = file.read()
+		file.close()
+		return content
+	else:
+		print("FROM getModelInfo: " + Path + " doesn't exist")
+		return None
+
+
 #Delete_Model("GiacomoGiorgi", 1, "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2211:19:18.237318 (copia)")
-InsertNewClassifier(getTrainedModel("GiacomoGiorgi", "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.35011"), "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.350115NEW", "GiacomoGiorgi", "Classifier64810")
+#InsertNewClassifier(getTrainedModel("GiacomoGiorgi", "Classifier64810", "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.35011"), "Classifier64810_GiacomoGiorgi__2019-11-2213:35:47.350115NEW", "GiacomoGiorgi", "Classifier64810")
+print(getModelInfo("Classifier1_GiacomoGiorgi__2019-11-1418:04:54.604508"))
