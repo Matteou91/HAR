@@ -83,7 +83,7 @@ def getTrainedModel(UserName, ClassifierName, Ticket=None):
 		if Ticket is None:  # return last created Model
 			list_of_files = glob.glob(join(Path, "*.h5"))
 			latest_file = max(list_of_files, key=getctime)
-			Path += latest_file
+			Path = latest_file
 			if exists(Path):
 				try:
 					model = load_model(Path)
